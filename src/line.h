@@ -16,5 +16,4 @@ public:
 	double a, b, t;
 	bool aNotExist;
 	Line(int X1, int Y1, int X2, int Y2,char Type);
-	Line();
 };

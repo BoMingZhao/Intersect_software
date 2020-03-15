@@ -7,7 +7,7 @@ using namespace std;
 
 Line::Line(int X1, int Y1, int X2, int Y2,char Type) {
 	A = (double)Y2 - Y1;
-	B = (double)X1 - X2;
+	B = (double)X1 - (double)X2;
 	C = (double)X2 * Y1 - (double)X1 * Y2;
 	if (Type == 'L') {
 		type = 0;
@@ -59,14 +59,4 @@ Line::Line(int X1, int Y1, int X2, int Y2,char Type) {
 		b = Y1 - a * X1;
 		t = 0;//delete warning
 	}
-}
-
-Line::Line() {
-	A = 0;
-	B = 0;
-	C = 0;
-	a = 0;
-	b = 0;
-	t = 0;
-	aNotExist = false;
 }

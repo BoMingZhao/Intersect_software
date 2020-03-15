@@ -3,6 +3,7 @@
 #include <vector>
 #include "line.h"
 #include "circle.h"
+
 class Intersect
 {
 private:

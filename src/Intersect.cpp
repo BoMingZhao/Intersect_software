@@ -1,6 +1,7 @@
 #include "Intersect.h"
 #include <iostream>
 using namespace std;
+#define ll long long
 const int MAX_XY = 100000;
 const int MIN_XY = -100000;
 typedef struct {
@@ -196,13 +197,118 @@ int Intersect::calculate_line_line(Line l1, Line l2)
 
 int Intersect::calculate_line_circle(Line l, Circle c)
 {
-
+    crosspoint point1;
+    crosspoint point2;
+    if (l.aNotExist) {
+        point1.x = l.t;
+        point2.x = l.t;
+        double k = ((double)l.t - c.m) * ((double)l.t - c.m);
+        double r2 = (double)c.r * c.r;
+        double left = r2 - k;
+        if (left < 0) {//no result
+            return 0;
+        }
+        else if (left == 0) {//one result
+            point1.y = c.n;
+            //pointmap.insert(pair<crosspoint, int>(point1, 1));
+            Setpoint.insert(point1);
+            return 1;
+        }
+        else {//two result
+            point1.y = sqrt(left) + c.n;
+            point2.y = c.n - sqrt(left);
+            //pointmap.insert(pair<crosspoint, int>(point1, 1));
+            //pointmap.insert(pair<crosspoint, int>(point2, 1));
+            Setpoint.insert(point1);
+            Setpoint.insert(point2);
+            return 2;
+        }
+    }
+    else {//ax^2+bx+t=0
+        double a = l.a * l.a + 1;
+        double b = 2 * ((l.b - c.n) * l.a - c.m);
+        double t = (double)c.m * c.m + (l.b - c.n) * (l.b - c.n) - (double)c.r * c.r;
+        double deta = b * b - 4 * a * t;
+        if (deta > 0) {
+            point1.x = (sqrt(deta) - b) / (2 * a);
+            point2.x = (-1 * sqrt(deta) - b) / (2 * a);
+            point1.y = l.a * point1.x + l.b;
+            point2.y = l.a * point2.x + l.b;
+            //pointmap.insert(pair<crosspoint, int>(point1, 1));
+            //pointmap.insert(pair<crosspoint, int>(point2, 1));
+            Setpoint.insert(point1);
+            Setpoint.insert(point2);
+            return 2;
+        }
+        else if (deta == 0) {
+            point1.x = (b == 0) ? 0 : -1 * b / (2 * a);
+            point1.y = l.a * point1.x + l.b;
+            //pointmap.insert(pair<crosspoint, int>(point1, 1));
+            Setpoint.insert(point1);
+            return 1;
+        }
+        else {
+            return 0;
+        }
+    }
 }
 
 int Intersect::calculate_circle_circle(Circle c1, Circle c2)
 {
-
-
+    crosspoint point1;
+    crosspoint point2;
+    if (c2.n == c1.n && c2.m == c1.m) {
+        return 0;
+    }
+    else if (c2.n == c1.n) {
+        double temp = ((double)c2.m * c2.m - (double)c1.m * c1.m + (double)c2.n * c2.n - (double)c1.n * c1.n + (double)c1.r * c1.r - (double)c2.r * c2.r)
+            / ((double)2 * ((double)c2.m - c1.m));
+        point1.x = temp;
+        point2.x = temp;
+        double left = (double)c1.r * c1.r - (temp - c1.m) * (temp - c1.m);
+        if (left > 0) {
+            point1.y = sqrt(left) + c1.n;
+            point2.y = c1.n - sqrt(left);
+            Setpoint.insert(point1);
+            Setpoint.insert(point2);
+            return 2;
+        }
+        else if (left == 0) {
+            point1.y = c1.n;
+            Setpoint.insert(point1);
+            return 1;
+        }
+        else {
+            return 0;
+        }
+    }
+    else {
+        double k = ((double)c1.m - c2.m) / ((double)c2.n - c1.n);
+        double temp = ((double)c2.m * c2.m - (double)c1.m * c1.m + (double)c2.n * c2.n - (double)c1.n * c1.n + (double)c1.r * c1.r - (double)c2.r * c2.r)
+            / ((double)2 * ((double)c2.n - c1.n));
+        double a = 1 + k * k;
+        double b = 2 * (k * temp - c1.n * k - c1.m);
+        double c = (double)c1.m * c1.m + (double)c1.n * c1.n - (double)c1.r * c1.r + temp * temp - 2 * temp * c1.n;
+        double deta = b * b - 4 * a * c;
+        if (deta > 0) {
+            point1.x = (sqrt(deta) - b) / (2 * a);
+            point2.x = (-1 * sqrt(deta) - b) / (2 * a);
+            point1.y = point1.x * k + temp;
+            point2.y = point2.x * k + temp;
+            Setpoint.insert(point1);
+            Setpoint.insert(point2);
+            return 2;
+        }
+        else if (deta == 0) {
+            point1.x = (b == 0) ? 0 : -1 * b / (2 * a);
+            point1.y = point1.x * k + temp;
+            Setpoint.insert(point1);
+            return 1;
+        }
+        else {
+            return 0;
+        }
+    }
 }
 
 void Intersect::readdata()
@@ -215,11 +321,12 @@ void Intersect::readdata()
         //“Ï≥£
     }
     for (int i = 1; i <= n; i++) {
-        if (scanf_s("%c", &type, 1) != 1) {
+        /*if (scanf_s("%c", &type, 1) != 1) {
             //“Ï≥£
-        }
+        }*/
+        cin >> type;
         if (type == 'L' || type == 'R' || type == 'S') {
-            if (scanf_s("%d%d%d%d", &x1, &x2, &y1, &y2) != 4) {
+            if (scanf_s("%d%d%d%d", &x1, &y1, &x2, &y2) != 4) {
                 //“Ï≥£
             }
             if (x1 == x2 && y1 == y2) {
