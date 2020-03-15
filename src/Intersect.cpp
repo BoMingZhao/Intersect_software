@@ -428,8 +428,10 @@ int Intersect::calculate_circle_circle(Circle c1, Circle c2)
     }
 }
 
-void Intersect::readdata()
+void Intersect::readdata(const char* name)
 {
+    FILE* stream;
+    freopen_s(&stream, name, "r", stdin);
     int n;
     char type;
     int x1, x2, y1, y2;
@@ -501,4 +503,98 @@ void Intersect::calculate()
 int Intersect::result() 
 {
     return Setpoint.size();
+}
+
+void Intersect::insertLine(int x1, int y1, int x2, int y2, char type) {
+    Line l(x1, y1, x2, y2, type);
+    //检查异常
+    lineset.push_back(l);
+}
+
+void Intersect::insertLine(Line l) {
+    //检查异常
+    lineset.push_back(l);
+}
+
+int Intersect::deleteLine(int x1, int y1, int x2, int y2, char type) {
+    vector<Line>::iterator it;
+    Line l1(x1, y1, x2, y2, type);
+    for (it = lineset.begin(); it != lineset.end(); it++) {
+        Line l2 = *it;
+        if (l1.equal(l2)) {
+            lineset.erase(it);
+            return 0;
+        }
+    }
+    return 1;
+}
+
+int Intersect::deleteLine(Line l) {
+    vector<Line>::iterator it;
+    for (it = lineset.begin(); it != lineset.end(); it++) {
+        Line l2 = *it;
+        if (l.equal(l2)) {
+            lineset.erase(it);
+            return 0;
+        }
+    }
+    return 1;
+}
+
+void Intersect::insertCircle(int x, int y, int r) {
+    Circle c(x, y, r);
+    //检查异常
+    circleset.push_back(c);
+}
+
+void Intersect::insertCircle(Circle c) {
+    //检查异常
+    circleset.push_back(c);
+}
+
+int Intersect::deleteCircle(int x, int y, int r) {
+    vector<Circle>::iterator it;
+    Circle c1(x, y, r);
+    for (it = circleset.begin(); it != circleset.end(); it++) {
+        Circle c2 = *it;
+        if (c1.equal(c2)) {
+            circleset.erase(it);
+            return 0;
+        }
+    }
+    return 1;
+}
+
+int Intersect::deleteCircle(Circle c) {
+    vector<Circle>::iterator it;
+    for (it = circleset.begin(); it != circleset.end(); it++) {
+        Circle c2 = *it;
+        if (c.equal(c2)) {
+            circleset.erase(it);
+            return 0;
+        }
+    }
+    return 1;
+}
+
+vector<Line> Intersect::pullLine() {
+    return lineset;
+}
+
+vector<Circle> Intersect::pullCircle() {
+    return circleset;
+}
+
+vector<pair<double, double>> Intersect::pullIntersect() {
+    set<crosspoint, cmp>::iterator it;
+    vector<pair<double, double>> point;
+    double x, y;
+    for (it = Setpoint.begin(); it != Setpoint.end(); it++) {
+        crosspoint p = *it;
+        x = p.x;
+        y = p.y;
+        pair<double, double> pp(x, y);
+        point.push_back(pp);
+    }
+    return point;
 }

@@ -20,7 +20,7 @@ int main(int argc, char* argv[])
         }
     }
     Intersect s;
-    s.readdata();
+    s.readdata("in.txt");
     s.calculate();
     cout << s.result() << endl;
     fclose(stdin);

@@ -67,3 +67,33 @@ Line::Line(int X1, int Y1, int X2, int Y2, char Type) {
 		t = 0;//delete warning
 	}
 }
+
+bool Line::equal(Line l) {
+	if (l.type != this->type) {
+		return false;
+	}
+	else if (l.type == 0) {
+		if ((this->A * l.B == this->B * l.A) && (this->A * l.C == l.A * this->C)) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	else if (l.type == 1) {
+		if ((this->A * l.B == this->B * l.A) && (this->A * l.C == l.A * this->C) && (this->x1 == l.x1) && (this->y1 == l.y1) && (this->dirct == l.dirct)) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	else {
+		if (this->x1 == l.x1 && this->y1 == l.y1 && this->x2 == l.x2 && this->y2 == l.y2) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+}

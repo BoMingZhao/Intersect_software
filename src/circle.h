@@ -11,4 +11,5 @@ class Circle {
 public:
 	int m, n, r;
 	Circle(int a, int b, int c);
+	bool equal(Circle c);
 };
