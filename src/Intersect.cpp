@@ -4,6 +4,10 @@ using namespace std;
 #define ll long long
 const int MAX_XY = 100000;
 const int MIN_XY = -100000;
+double arg(double x, double y) 
+{
+    return atan2(y, x);
+}
 typedef struct {
     double x;
     double y;
@@ -104,8 +108,64 @@ int Intersect::calculate_line_line(Line l1, Line l2)
 {//caculate the crosspoint of the two lines 
     //int is eazy to test
     crosspoint point;
-    if (l1.A * l2.B == l1.B * l2.A) {
+    if ((l1.A * l2.B == l1.B * l2.A) && (l1.A * l2.C != l2.A * l1.C)) {//平行但不重合
         return 0;
+    }
+    else if ((l1.A * l2.B == l1.B * l2.A) && (l1.A * l2.C == l2.A * l1.C)) {
+        if (l1.type == 1) {
+            if (l2.type == 1) {
+                if (l1.x1 == l2.x1 && l1.y1 == l2.y1) {
+                    point.x = l1.x1;
+                    point.y = l1.y1;
+                    Setpoint.insert(point);
+                    return 1;
+                }
+            }
+            else {
+                if (l1.x1 == l2.x1 && l1.y1 == l2.y1) {
+                    point.x = l1.x1;
+                    point.y = l1.y1;
+                    Setpoint.insert(point);
+                    return 1;
+                }
+                else if (l1.x1 == l2.x2 && l1.y1 == l2.y2) {
+                    point.x = l1.x1;
+                    point.y = l1.y1;
+                    Setpoint.insert(point);
+                    return 1;
+                }
+            }
+        }
+        else {
+            if (l2.type == 1) {
+                if (l1.x1 == l2.x1 && l1.y1 == l2.y1) {
+                    point.x = l1.x1;
+                    point.y = l1.y1;
+                    Setpoint.insert(point);
+                    return 1;
+                }
+                else if (l1.x2 == l2.x1 && l1.y2 == l2.y1) {
+                    point.x = l1.x2;
+                    point.y = l1.y2;
+                    Setpoint.insert(point);
+                    return 1;
+                }
+            }
+            else {
+                if (l1.x1 == l2.x2 && l1.y1 == l2.y2) {
+                    point.x = l1.x1;
+                    point.y = l1.y1;
+                    Setpoint.insert(point);
+                    return 1;
+                }
+                else if (l1.x2 == l2.x1 && l1.y2 == l2.y1) {
+                    point.x = l1.x2;
+                    point.y = l1.y2;
+                    Setpoint.insert(point);
+                    return 1;
+                }
+            }
+        }
     }
     else {
         point.y = (l1.A * l2.C - l1.C * l2.A) / (l1.B * l2.A - l1.A * l2.B);
@@ -210,18 +270,61 @@ int Intersect::calculate_line_circle(Line l, Circle c)
         }
         else if (left == 0) {//one result
             point1.y = c.n;
-            //pointmap.insert(pair<crosspoint, int>(point1, 1));
-            Setpoint.insert(point1);
-            return 1;
+            if (l.type == 0) {
+                Setpoint.insert(point1);
+                return 1;
+            }
+            else if (l.type == 1) {
+                if (is_on_ray(l, point1)) {
+                    Setpoint.insert(point1);
+                    return 1;
+                }
+                else {
+                    return 0;
+                }
+            }
+            else {
+                if (is_on_segment(l, point1)) {
+                    Setpoint.insert(point1);
+                    return 1;
+                }
+                else {
+                    return 0;
+                }
+            }
         }
         else {//two result
             point1.y = sqrt(left) + c.n;
             point2.y = c.n - sqrt(left);
-            //pointmap.insert(pair<crosspoint, int>(point1, 1));
-            //pointmap.insert(pair<crosspoint, int>(point2, 1));
-            Setpoint.insert(point1);
-            Setpoint.insert(point2);
-            return 2;
+            if (l.type == 0) {
+                Setpoint.insert(point1);
+                Setpoint.insert(point2);
+                return 2;
+            }
+            else if (l.type == 1) {
+                int num = 0;
+                if (is_on_ray(l, point1)) {
+                    Setpoint.insert(point1);
+                    num++;
+                }
+                if (is_on_ray(l, point2)) {
+                    Setpoint.insert(point2);
+                    num++;
+                }
+                return num;
+            }
+            else {
+                int num = 0;
+                if (is_on_segment(l, point1)) {
+                    Setpoint.insert(point1);
+                    num++;
+                }
+                if (is_on_segment(l, point2)) {
+                    Setpoint.insert(point2);
+                    num++;
+                }
+                return num;
+            }
         }
     }
     else {//ax^2+bx+t=0
@@ -234,18 +337,61 @@ int Intersect::calculate_line_circle(Line l, Circle c)
             point2.x = (-1 * sqrt(deta) - b) / (2 * a);
             point1.y = l.a * point1.x + l.b;
             point2.y = l.a * point2.x + l.b;
-            //pointmap.insert(pair<crosspoint, int>(point1, 1));
-            //pointmap.insert(pair<crosspoint, int>(point2, 1));
-            Setpoint.insert(point1);
-            Setpoint.insert(point2);
-            return 2;
+            if (l.type == 0) {
+                Setpoint.insert(point1);
+                Setpoint.insert(point2);
+                return 2;
+            }
+            else if (l.type == 1) {
+                int num = 0;
+                if (is_on_ray(l, point1)) {
+                    Setpoint.insert(point1);
+                    num++;
+                }
+                if (is_on_ray(l, point2)) {
+                    Setpoint.insert(point2);
+                    num++;
+                }
+                return num;
+            }
+            else {
+                int num = 0;
+                if (is_on_segment(l, point1)) {
+                    Setpoint.insert(point1);
+                    num++;
+                }
+                if (is_on_segment(l, point2)) {
+                    Setpoint.insert(point2);
+                    num++;
+                }
+                return num;
+            }
         }
         else if (deta == 0) {
             point1.x = (b == 0) ? 0 : -1 * b / (2 * a);
             point1.y = l.a * point1.x + l.b;
-            //pointmap.insert(pair<crosspoint, int>(point1, 1));
-            Setpoint.insert(point1);
-            return 1;
+            if (l.type == 0) {
+                Setpoint.insert(point1);
+                return 1;
+            }
+            else if (l.type == 1) {
+                if (is_on_ray(l, point1)) {
+                    Setpoint.insert(point1);
+                    return 1;
+                }
+                else {
+                    return 0;
+                }
+            }
+            else {
+                if (is_on_segment(l, point1)) {
+                    Setpoint.insert(point1);
+                    return 1;
+                }
+                else {
+                    return 0;
+                }
+            }
         }
         else {
             return 0;
@@ -257,57 +403,28 @@ int Intersect::calculate_circle_circle(Circle c1, Circle c2)
 {
     crosspoint point1;
     crosspoint point2;
-    if (c2.n == c1.n && c2.m == c1.m) {
+    double norm = ((double)c1.m - c2.m) * ((double)c1.m - c2.m) + ((double)c1.n - c2.n) * ((double)c1.n - c2.n);
+    double d = sqrt(norm);
+    if (d > ((double)c1.r + c2.r)) {
         return 0;
     }
-    else if (c2.n == c1.n) {
-        double temp = ((double)c2.m * c2.m - (double)c1.m * c1.m + (double)c2.n * c2.n - (double)c1.n * c1.n + (double)c1.r * c1.r - (double)c2.r * c2.r)
-            / ((double)2 * ((double)c2.m - c1.m));
-        point1.x = temp;
-        point2.x = temp;
-        double left = (double)c1.r * c1.r - (temp - c1.m) * (temp - c1.m);
-        if (left > 0) {
-            point1.y = sqrt(left) + c1.n;
-            point2.y = c1.n - sqrt(left);
-            Setpoint.insert(point1);
-            Setpoint.insert(point2);
-            return 2;
-        }
-        else if (left == 0) {
-            point1.y = c1.n;
-            Setpoint.insert(point1);
-            return 1;
-        }
-        else {
-            return 0;
-        }
+    if (d < (fabs((double)c1.r - c2.r))) {
+        return 0;
+    }
+    double a = acos(((double)c1.r * c1.r + d * d - (double)c2.r * c2.r) / ((double)2 * c1.r * d));
+    double t = arg((double)c2.m - c1.m, (double)c2.n - c1.n);
+    point1.x = c1.m + cos(t + a) * c1.r;
+    point1.y = c1.n + sin(t + a) * c1.r;
+    if (a == 0) {
+        Setpoint.insert(point1);
+        return 1;
     }
     else {
-        double k = ((double)c1.m - c2.m) / ((double)c2.n - c1.n);
-        double temp = ((double)c2.m * c2.m - (double)c1.m * c1.m + (double)c2.n * c2.n - (double)c1.n * c1.n + (double)c1.r * c1.r - (double)c2.r * c2.r)
-            / ((double)2 * ((double)c2.n - c1.n));
-        double a = 1 + k * k;
-        double b = 2 * (k * temp - c1.n * k - c1.m);
-        double c = (double)c1.m * c1.m + (double)c1.n * c1.n - (double)c1.r * c1.r + temp * temp - 2 * temp * c1.n;
-        double deta = b * b - 4 * a * c;
-        if (deta > 0) {
-            point1.x = (sqrt(deta) - b) / (2 * a);
-            point2.x = (-1 * sqrt(deta) - b) / (2 * a);
-            point1.y = point1.x * k + temp;
-            point2.y = point2.x * k + temp;
-            Setpoint.insert(point1);
-            Setpoint.insert(point2);
-            return 2;
-        }
-        else if (deta == 0) {
-            point1.x = (b == 0) ? 0 : -1 * b / (2 * a);
-            point1.y = point1.x * k + temp;
-            Setpoint.insert(point1);
-            return 1;
-        }
-        else {
-            return 0;
-        }
+        point2.x = c1.m + cos(t - a) * c1.r;
+        point2.y = c1.n + sin(t - a) * c1.r;
+        Setpoint.insert(point1);
+        Setpoint.insert(point2);
+        return 2;
     }
 }
 

@@ -4,9 +4,7 @@
 #include <map>
 #include <string>
 #include <math.h>
-#include "line.h"
-#include "circle.h"
-//#include "point.h"
+#include "Intersect.h"
 
 using namespace std;
 
