@@ -5,12 +5,18 @@
 #include <string>
 #include "line.h"
 #include "circle.h"
+#include "Exception_WF.h"
+#include "Exception_OFB.h"
+#include "Exception_IP.h"
+#include "Exception_MD.h"
 using namespace std;
 
 class Intersect
 {
 public:
-	void readdata(const char* name);
+	void clear();
+	void readdata_File(const char* name);
+	void readdata();
 	int result();
 	void calculate();
 	void insertLine(int x1, int y1, int x2, int y2, char type);
@@ -25,6 +31,8 @@ public:
 	vector<Circle> pullCircle();
 	vector<pair<double, double>> pullIntersect();
 //private:
+	bool checkCircle(Circle c);
+	bool checkLine(Line l);
 	int calculate_line_line(Line l1, Line l2);
 	int calculate_line_circle(Line l, Circle c);
 	int calculate_circle_circle(Circle c1, Circle c2);
