@@ -968,6 +968,36 @@ int Intersect::result()
 }
 
 void Intersect::insertLine(int x1, int y1, int x2, int y2, char type) {
+    try {
+        if (x1 == x2 && y1 == y2) {
+            throw Exception_MD();
+        }
+    }
+    catch (Exception_MD & me)
+    {
+        cout << me.what();
+        return;
+    }
+    try {
+        if (x1 >= MAX_XY || x2 >= MAX_XY || y1 >= MAX_XY || y2 >= MAX_XY) {
+            throw Exception_OFB();
+        }
+    }
+    catch (Exception_OFB & me)
+    {
+        cout << me.what(0);
+        return;
+    }
+    try {
+        if (x1 <= MIN_XY || x2 <= MIN_XY || y1 <= MIN_XY || y2 <= MIN_XY) {
+            throw Exception_OFB();
+        }
+    }
+    catch (Exception_OFB & me)
+    {
+        cout << me.what(1);
+        return;
+    }
     Line l(x1, y1, x2, y2, type);
     try {
         if (checkLine(l) == false) {
@@ -1022,6 +1052,36 @@ int Intersect::deleteLine(Line l) {
 }
 
 void Intersect::insertCircle(int x, int y, int r) {
+    try {
+        if (x >= MAX_XY || y >= MAX_XY || r >= MAX_XY) {
+            throw Exception_OFB();
+        }
+    }
+    catch (Exception_OFB & me)
+    {
+        cout << me.what(2);
+        return;
+    }
+    try {
+        if (x <= MIN_XY || y <= MIN_XY) {
+            throw Exception_OFB();
+        }
+    }
+    catch (Exception_OFB & me)
+    {
+        cout << me.what(3);
+        return;
+    }
+    try {
+        if (r <= 0) {
+            throw Exception_OFB();
+        }
+    }
+    catch (Exception_OFB & me)
+    {
+        cout << me.what(4);
+        return;
+    }
     Circle c(x, y, r);
     try {
         if (checkCircle(c) == false) {

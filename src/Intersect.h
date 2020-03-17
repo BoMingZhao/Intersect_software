@@ -11,7 +11,7 @@
 #include "Exception_MD.h"
 using namespace std;
 
-class Intersect
+class __declspec(dllexport)Intersect
 {
 public:
 	void clear();
@@ -30,7 +30,7 @@ public:
 	vector<Line> pullLine();
 	vector<Circle> pullCircle();
 	vector<pair<double, double>> pullIntersect();
-//private:
+	//private:
 	bool checkCircle(Circle c);
 	bool checkLine(Line l);
 	int calculate_line_line(Line l1, Line l2);
