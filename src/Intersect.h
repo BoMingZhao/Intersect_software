@@ -23,6 +23,7 @@ public:
 	int insertCircle(int x, int y, int r);
 	int deleteCircle(int x, int y, int r);
 	vector<pair<double, double>> pullIntersect();
+	vector<vector<int>> pullgraph();
 	//private:
 	bool checkCircle(Circle c);
 	bool checkLine(Line l);

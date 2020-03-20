@@ -1,10 +1,11 @@
 #include "Intersect.h"
+#include "pch.h"
 #include <iostream>
 using namespace std;
 #define ll long long
 const int MAX_XY = 100000;
 const int MIN_XY = -100000;
-double arg(double x, double y) 
+double arg(double x, double y)
 {
     return atan2(y, x);
 }
@@ -128,7 +129,7 @@ bool Intersect::checkLine(Line l) {
                     if (l2.dirct == l.dirct) {
                         return false;
                     }
-                    else if (l2.dirct==0) {
+                    else if (l2.dirct == 0) {
                         if (l2.x1 < l.x1) {
                             return false;
                         }
@@ -235,7 +236,7 @@ bool Intersect::checkCircle(Circle c) {
     return true;
 }
 
-int Intersect::calculate_line_line(Line l1, Line l2) 
+int Intersect::calculate_line_line(Line l1, Line l2)
 {//caculate the crosspoint of the two lines 
     //int is eazy to test
     crosspoint point;
@@ -582,7 +583,7 @@ void Intersect::readdata()
             throw Exception_WF();
         }
     }
-    catch (Exception_WF & me)
+    catch (Exception_WF& me)
     {
         cout << me.what(0, 1);
         exit(0);
@@ -595,7 +596,7 @@ void Intersect::readdata()
                     throw Exception_WF();
                 }
             }
-            catch (Exception_WF & me)
+            catch (Exception_WF& me)
             {
                 cout << me.what(0, 4);
                 exit(0);
@@ -605,7 +606,7 @@ void Intersect::readdata()
                     throw Exception_MD();
                 }
             }
-            catch (Exception_MD & me)
+            catch (Exception_MD& me)
             {
                 cout << me.what();
                 exit(0);
@@ -615,7 +616,7 @@ void Intersect::readdata()
                     throw Exception_OFB();
                 }
             }
-            catch (Exception_OFB & me)
+            catch (Exception_OFB& me)
             {
                 cout << me.what(0);
                 exit(0);
@@ -625,7 +626,7 @@ void Intersect::readdata()
                     throw Exception_OFB();
                 }
             }
-            catch (Exception_OFB & me)
+            catch (Exception_OFB& me)
             {
                 cout << me.what(1);
                 exit(0);
@@ -636,7 +637,7 @@ void Intersect::readdata()
                     throw Exception_IP();
                 }
             }
-            catch (Exception_IP & me) 
+            catch (Exception_IP& me)
             {
                 cout << me.what(0);
                 exit(0);
@@ -649,7 +650,7 @@ void Intersect::readdata()
                     throw Exception_WF();
                 }
             }
-            catch (Exception_WF & me)
+            catch (Exception_WF& me)
             {
                 cout << me.what(0, 3);
                 exit(0);
@@ -659,7 +660,7 @@ void Intersect::readdata()
                     throw Exception_OFB();
                 }
             }
-            catch (Exception_OFB & me)
+            catch (Exception_OFB& me)
             {
                 cout << me.what(2);
                 exit(0);
@@ -669,7 +670,7 @@ void Intersect::readdata()
                     throw Exception_OFB();
                 }
             }
-            catch (Exception_OFB & me)
+            catch (Exception_OFB& me)
             {
                 cout << me.what(3);
                 exit(0);
@@ -679,7 +680,7 @@ void Intersect::readdata()
                     throw Exception_OFB();
                 }
             }
-            catch (Exception_OFB & me)
+            catch (Exception_OFB& me)
             {
                 cout << me.what(4);
                 exit(0);
@@ -690,7 +691,7 @@ void Intersect::readdata()
                     throw Exception_IP();
                 }
             }
-            catch (Exception_IP & me) 
+            catch (Exception_IP& me)
             {
                 cout << me.what(1);
                 exit(0);
@@ -701,7 +702,7 @@ void Intersect::readdata()
             try {
                 throw Exception_WF();
             }
-            catch (Exception_WF & me)
+            catch (Exception_WF& me)
             {
                 cout << me.what(2, 0);
                 exit(0);
@@ -710,7 +711,7 @@ void Intersect::readdata()
     }
 }
 
-void Intersect::calculate() 
+void Intersect::calculate()
 {
     for (unsigned int i = 1; i < lineset.size(); i++) {
         for (unsigned int j = i + 1; j <= lineset.size(); j++) {
@@ -735,7 +736,7 @@ void Intersect::calculate()
     }
 }
 
-int Intersect::result() 
+int Intersect::result()
 {
     return Setpoint.size();
 }
@@ -746,7 +747,7 @@ int Intersect::insertLine(int x1, int y1, int x2, int y2, char type) {
             throw Exception_MD();
         }
     }
-    catch (Exception_MD & me)
+    catch (Exception_MD& me)
     {
         cout << me.what();
         return 1;
@@ -756,7 +757,7 @@ int Intersect::insertLine(int x1, int y1, int x2, int y2, char type) {
             throw Exception_OFB();
         }
     }
-    catch (Exception_OFB & me)
+    catch (Exception_OFB& me)
     {
         cout << me.what(0);
         return 2;
@@ -766,7 +767,7 @@ int Intersect::insertLine(int x1, int y1, int x2, int y2, char type) {
             throw Exception_OFB();
         }
     }
-    catch (Exception_OFB & me)
+    catch (Exception_OFB& me)
     {
         cout << me.what(1);
         return 3;
@@ -777,7 +778,7 @@ int Intersect::insertLine(int x1, int y1, int x2, int y2, char type) {
             throw Exception_IP();
         }
     }
-    catch (Exception_IP & me) 
+    catch (Exception_IP& me)
     {
         cout << me.what(0);
         return 4;
@@ -805,7 +806,7 @@ int Intersect::insertCircle(int x, int y, int r) {
             throw Exception_OFB();
         }
     }
-    catch (Exception_OFB & me)
+    catch (Exception_OFB& me)
     {
         cout << me.what(2);
         return 1;
@@ -815,7 +816,7 @@ int Intersect::insertCircle(int x, int y, int r) {
             throw Exception_OFB();
         }
     }
-    catch (Exception_OFB & me)
+    catch (Exception_OFB& me)
     {
         cout << me.what(3);
         return 2;
@@ -825,7 +826,7 @@ int Intersect::insertCircle(int x, int y, int r) {
             throw Exception_OFB();
         }
     }
-    catch (Exception_OFB & me)
+    catch (Exception_OFB& me)
     {
         cout << me.what(4);
         return 3;
@@ -836,7 +837,7 @@ int Intersect::insertCircle(int x, int y, int r) {
             throw Exception_IP();
         }
     }
-    catch (Exception_IP & me) {
+    catch (Exception_IP& me) {
         cout << me.what(1);
         return 4;
     }
