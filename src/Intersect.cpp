@@ -577,7 +577,6 @@ void Intersect::readdata()
     char type;
     int x1, x2, y1, y2;
     int x, y, r;
-A:
     try {
         if (scanf_s("%d", &n) != 1) {
             throw Exception_WF();
@@ -586,15 +585,11 @@ A:
     catch (Exception_WF & me)
     {
         cout << me.what(0, 1);
-        char error;
-        while ((error = getchar()) != '\n');
-        goto A;
+        exit(0);
     }
     for (int i = 1; i <= n; i++) {
-        D:
         cin >> type;
         if (type == 'L' || type == 'R' || type == 'S') {
-            B:
             try {
                 if (scanf_s("%d%d%d%d", &x1, &y1, &x2, &y2) != 4) {
                     throw Exception_WF();
@@ -603,10 +598,7 @@ A:
             catch (Exception_WF & me)
             {
                 cout << me.what(0, 4);
-                cout << "请重新输入两个点的坐标" << endl;
-                char error;
-                while ((error = getchar()) != '\n');
-                goto B;
+                exit(0);
             }
             try {
                 if (x1 == x2 && y1 == y2) {
@@ -616,8 +608,7 @@ A:
             catch (Exception_MD & me)
             {
                 cout << me.what();
-                cout << "请重新输入两个点的坐标" << endl;
-                goto B;
+                exit(0);
             }
             try {
                 if (x1 >= MAX_XY || x2 >= MAX_XY || y1 >= MAX_XY || y2 >= MAX_XY) {
@@ -627,10 +618,7 @@ A:
             catch (Exception_OFB & me)
             {
                 cout << me.what(0);
-                cout << "请重新输入两个点的坐标" << endl;
-                char error;
-                while ((error = getchar()) != '\n');
-                goto B;
+                exit(0);
             }
             try {
                 if (x1 <= MIN_XY || x2 <= MIN_XY || y1 <= MIN_XY || y2 <= MIN_XY) {
@@ -640,10 +628,7 @@ A:
             catch (Exception_OFB & me)
             {
                 cout << me.what(1);
-                cout << "请重新输入两个点的坐标" << endl;
-                char error;
-                while ((error = getchar()) != '\n');
-                goto B;
+                exit(0);
             }
             Line l(x1, y1, x2, y2, type);
             try {
@@ -654,15 +639,11 @@ A:
             catch (Exception_IP & me) 
             {
                 cout << me.what(0);
-                cout << "请重新输入两个点的坐标" << endl;
-                char error;
-                while ((error = getchar()) != '\n');
-                goto B;
+                exit(0);
             }
             lineset.push_back(l);
         }
         else if (type == 'C') {
-            C:
             try {
                 if (scanf_s("%d%d%d", &x, &y, &r) != 3) {
                     throw Exception_WF();
@@ -671,10 +652,7 @@ A:
             catch (Exception_WF & me)
             {
                 cout << me.what(0, 3);
-                cout << "请重新输入圆心坐标以及半径" << endl;
-                char error;
-                while ((error = getchar()) != '\n');
-                goto C;
+                exit(0);
             }
             try {
                 if (x >= MAX_XY || y >= MAX_XY || r >= MAX_XY) {
@@ -684,10 +662,7 @@ A:
             catch (Exception_OFB & me)
             {
                 cout << me.what(2);
-                cout << "请重新输入圆心坐标以及半径" << endl;
-                char error;
-                while ((error = getchar()) != '\n');
-                goto C;
+                exit(0);
             }
             try {
                 if (x <= MIN_XY || y <= MIN_XY) {
@@ -697,10 +672,7 @@ A:
             catch (Exception_OFB & me)
             {
                 cout << me.what(3);
-                cout << "请重新输入圆心坐标以及半径" << endl;
-                char error;
-                while ((error = getchar()) != '\n');
-                goto C;
+                exit(0);
             }
             try {
                 if (r <= 0) {
@@ -710,10 +682,7 @@ A:
             catch (Exception_OFB & me)
             {
                 cout << me.what(4);
-                cout << "请重新输入圆心坐标以及半径" << endl;
-                char error;
-                while ((error = getchar()) != '\n');
-                goto C;
+                exit(0);
             }
             Circle c(x, y, r);
             try {
@@ -724,10 +693,7 @@ A:
             catch (Exception_IP & me) 
             {
                 cout << me.what(1);
-                cout << "请重新输入圆心坐标以及半径" << endl;
-                char error;
-                while ((error = getchar()) != '\n');
-                goto C;
+                exit(0);
             }
             circleset.push_back(c);
         }
@@ -738,10 +704,7 @@ A:
             catch (Exception_WF & me)
             {
                 cout << me.what(2, 0);
-                char error;
-                while ((error = getchar()) != '\n');
-                cout << "请重新输入图形类型及相应参数" << endl;
-                goto D;
+                exit(0);
             }
         }
     }
