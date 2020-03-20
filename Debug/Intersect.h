@@ -11,24 +11,17 @@
 #include "Exception_MD.h"
 using namespace std;
 
-class __declspec(dllimport) Intersect
+class Intersect
 {
 public:
 	void clear();
-	void readdata_File(const char* name);
 	void readdata();
 	int result();
 	void calculate();
-	void insertLine(int x1, int y1, int x2, int y2, char type);
-	void insertLine(Line l);
+	int insertLine(int x1, int y1, int x2, int y2, char type);//0插入，非0出错
 	int deleteLine(int x1, int y1, int x2, int y2, char type);//0删除 1出错
-	int deleteLine(Line l);
-	void insertCircle(int x, int y, int r);
-	void insertCircle(Circle c);
+	int insertCircle(int x, int y, int r);
 	int deleteCircle(int x, int y, int r);
-	int deleteCircle(Circle c);
-	vector<Line> pullLine();
-	vector<Circle> pullCircle();
 	vector<pair<double, double>> pullIntersect();
 	//private:
 	bool checkCircle(Circle c);

@@ -55,7 +55,7 @@ void Intersect::clear()
 }
 
 bool is_on_ray(Line l, crosspoint point)
-{//直线和射线的交点问题
+{//射线的交点问题
     if (l.dirct == 0) {
         if (point.x >= l.x1) {
             return true;
@@ -571,196 +571,6 @@ int Intersect::calculate_circle_circle(Circle c1, Circle c2)
     }
 }
 
-void Intersect::readdata_File(const char* name)
-{
-    FILE* stream;
-    freopen_s(&stream, name, "r", stdin);
-    int n;
-    char type;
-    int x1, x2, y1, y2;
-    int x, y, r;
-    try {
-        if (scanf_s("%d", &n) != 1) {
-            throw Exception_WF();
-        }
-    }
-    catch (Exception_WF & me)
-    {
-        cout << me.what(0, 1);
-        cout << "请检查文件格式后重试" << endl;
-        lineset.clear();
-        circleset.clear();
-        fclose(stdin);
-        return;
-    }
-    for (int i = 1; i <= n; i++) {
-        cin >> type;
-        if (type == 'L' || type == 'R' || type == 'S') {
-            try {
-                if (scanf_s("%d%d%d%d", &x1, &y1, &x2, &y2) != 4) {
-                    throw Exception_WF();
-                }
-            }
-            catch (Exception_WF & me)
-            {
-                cout << me.what(0, 4);
-                cout << "请检查文件格式后重试" << endl;
-                lineset.clear();
-                circleset.clear();
-                fclose(stdin);
-                return;
-            }
-            try {
-                if (x1 == x2 && y1 == y2) {
-                    throw Exception_MD();
-                }
-            }
-            catch (Exception_MD & me)
-            {
-                cout << me.what();
-                cout << "请检查文件格式后重试" << endl;
-                lineset.clear();
-                circleset.clear();
-                fclose(stdin);
-                return;
-            }
-            try {
-                if (x1 >= MAX_XY || x2 >= MAX_XY || y1 >= MAX_XY || y2 >= MAX_XY) {
-                    throw Exception_OFB();
-                }
-            }
-            catch (Exception_OFB & me)
-            {
-                cout << me.what(0);
-                cout << "请检查文件格式后重试" << endl;
-                lineset.clear();
-                circleset.clear();
-                fclose(stdin);
-                return;
-            }
-            try {
-                if (x1 <= MIN_XY || x2 <= MIN_XY || y1 <= MIN_XY || y2 <= MIN_XY) {
-                    throw Exception_OFB();
-                }
-            }
-            catch (Exception_OFB & me)
-            {
-                cout << me.what(1);
-                cout << "请检查文件格式后重试" << endl;
-                lineset.clear();
-                circleset.clear();
-                fclose(stdin);
-                return;
-            }
-            Line l(x1, y1, x2, y2, type);
-            try {
-                if (checkLine(l) == false) {
-                    throw Exception_IP();
-                }
-            }
-            catch (Exception_IP & me)
-            {
-                cout << me.what(0);
-                cout << "请检查文件格式后重试" << endl;
-                lineset.clear();
-                circleset.clear();
-                fclose(stdin);
-                return;
-            }
-            lineset.push_back(l);
-        }
-        else if (type == 'C') {
-            try {
-                if (scanf_s("%d%d%d", &x, &y, &r) != 3) {
-                    throw Exception_WF();
-                }
-            }
-            catch (Exception_WF & me)
-            {
-                cout << me.what(0, 3);
-                cout << "请检查文件格式后重试" << endl;
-                lineset.clear();
-                circleset.clear();
-                fclose(stdin);
-                return;
-            }
-            try {
-                if (x >= MAX_XY || y >= MAX_XY || r >= MAX_XY) {
-                    throw Exception_OFB();
-                }
-            }
-            catch (Exception_OFB & me)
-            {
-                cout << me.what(2);
-                cout << "请检查文件格式后重试" << endl;
-                lineset.clear();
-                circleset.clear();
-                fclose(stdin);
-                return;
-            }
-            try {
-                if (x <= MIN_XY || y <= MIN_XY) {
-                    throw Exception_OFB();
-                }
-            }
-            catch (Exception_OFB & me)
-            {
-                cout << me.what(3);
-                cout << "请检查文件格式后重试" << endl;
-                lineset.clear();
-                circleset.clear();
-                fclose(stdin);
-                return;
-            }
-            try {
-                if (r <= 0) {
-                    throw Exception_OFB();
-                }
-            }
-            catch (Exception_OFB & me)
-            {
-                cout << me.what(4);
-                cout << "请检查文件格式后重试" << endl;
-                lineset.clear();
-                circleset.clear();
-                fclose(stdin);
-                return;
-            }
-            Circle c(x, y, r);
-            try {
-                if (checkCircle(c) == false) {
-                    throw Exception_IP();
-                }
-            }
-            catch (Exception_IP & me)
-            {
-                cout << me.what(1);
-                cout << "请检查文件格式后重试" << endl;
-                lineset.clear();
-                circleset.clear();
-                fclose(stdin);
-                return;
-            }
-            circleset.push_back(c);
-        }
-        else {
-            try {
-                throw Exception_WF();
-            }
-            catch (Exception_WF & me)
-            {
-                cout << me.what(2, 0);
-                cout << "请检查文件格式后重试" << endl;
-                lineset.clear();
-                circleset.clear();
-                fclose(stdin);
-                return;
-            }
-        }
-    }
-    fclose(stdin);
-}
-
 void Intersect::readdata()
 {
     int n;
@@ -967,7 +777,7 @@ int Intersect::result()
     return Setpoint.size();
 }
 
-void Intersect::insertLine(int x1, int y1, int x2, int y2, char type) {
+int Intersect::insertLine(int x1, int y1, int x2, int y2, char type) {
     try {
         if (x1 == x2 && y1 == y2) {
             throw Exception_MD();
@@ -976,7 +786,7 @@ void Intersect::insertLine(int x1, int y1, int x2, int y2, char type) {
     catch (Exception_MD & me)
     {
         cout << me.what();
-        return;
+        return 1;
     }
     try {
         if (x1 >= MAX_XY || x2 >= MAX_XY || y1 >= MAX_XY || y2 >= MAX_XY) {
@@ -986,7 +796,7 @@ void Intersect::insertLine(int x1, int y1, int x2, int y2, char type) {
     catch (Exception_OFB & me)
     {
         cout << me.what(0);
-        return;
+        return 2;
     }
     try {
         if (x1 <= MIN_XY || x2 <= MIN_XY || y1 <= MIN_XY || y2 <= MIN_XY) {
@@ -996,7 +806,7 @@ void Intersect::insertLine(int x1, int y1, int x2, int y2, char type) {
     catch (Exception_OFB & me)
     {
         cout << me.what(1);
-        return;
+        return 3;
     }
     Line l(x1, y1, x2, y2, type);
     try {
@@ -1007,23 +817,10 @@ void Intersect::insertLine(int x1, int y1, int x2, int y2, char type) {
     catch (Exception_IP & me) 
     {
         cout << me.what(0);
-        return;
+        return 4;
     }
     lineset.push_back(l);
-}
-
-void Intersect::insertLine(Line l) {
-    try {
-        if (checkLine(l) == false) {
-            throw Exception_IP();
-        }
-    }
-    catch (Exception_IP & me)
-    {
-        cout << me.what(0);
-        return;
-    }
-    lineset.push_back(l);
+    return 0;
 }
 
 int Intersect::deleteLine(int x1, int y1, int x2, int y2, char type) {
@@ -1039,19 +836,7 @@ int Intersect::deleteLine(int x1, int y1, int x2, int y2, char type) {
     return 1;
 }
 
-int Intersect::deleteLine(Line l) {
-    vector<Line>::iterator it;
-    for (it = lineset.begin(); it != lineset.end(); it++) {
-        Line l2 = *it;
-        if (l.equal(l2)) {
-            lineset.erase(it);
-            return 0;
-        }
-    }
-    return 1;
-}
-
-void Intersect::insertCircle(int x, int y, int r) {
+int Intersect::insertCircle(int x, int y, int r) {
     try {
         if (x >= MAX_XY || y >= MAX_XY || r >= MAX_XY) {
             throw Exception_OFB();
@@ -1060,7 +845,7 @@ void Intersect::insertCircle(int x, int y, int r) {
     catch (Exception_OFB & me)
     {
         cout << me.what(2);
-        return;
+        return 1;
     }
     try {
         if (x <= MIN_XY || y <= MIN_XY) {
@@ -1070,7 +855,7 @@ void Intersect::insertCircle(int x, int y, int r) {
     catch (Exception_OFB & me)
     {
         cout << me.what(3);
-        return;
+        return 2;
     }
     try {
         if (r <= 0) {
@@ -1080,7 +865,7 @@ void Intersect::insertCircle(int x, int y, int r) {
     catch (Exception_OFB & me)
     {
         cout << me.what(4);
-        return;
+        return 3;
     }
     Circle c(x, y, r);
     try {
@@ -1090,22 +875,10 @@ void Intersect::insertCircle(int x, int y, int r) {
     }
     catch (Exception_IP & me) {
         cout << me.what(1);
-        return;
+        return 4;
     }
     circleset.push_back(c);
-}
-
-void Intersect::insertCircle(Circle c) {
-    try {
-        if (checkCircle(c) == false) {
-            throw Exception_IP();
-        }
-    }
-    catch (Exception_IP & me) {
-        cout << me.what(1);
-        return;
-    }
-    circleset.push_back(c);
+    return 0;
 }
 
 int Intersect::deleteCircle(int x, int y, int r) {
@@ -1119,26 +892,6 @@ int Intersect::deleteCircle(int x, int y, int r) {
         }
     }
     return 1;
-}
-
-int Intersect::deleteCircle(Circle c) {
-    vector<Circle>::iterator it;
-    for (it = circleset.begin(); it != circleset.end(); it++) {
-        Circle c2 = *it;
-        if (c.equal(c2)) {
-            circleset.erase(it);
-            return 0;
-        }
-    }
-    return 1;
-}
-
-vector<Line> Intersect::pullLine() {
-    return lineset;
-}
-
-vector<Circle> Intersect::pullCircle() {
-    return circleset;
 }
 
 vector<pair<double, double>> Intersect::pullIntersect() {
