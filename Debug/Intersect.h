@@ -16,6 +16,7 @@ class __declspec(dllimport) Intersect
 public:
 	void clear();
 	void readdata();
+	void readdata_File(const char* name);
 	int result();
 	void calculate();
 	int insertLine(int x1, int y1, int x2, int y2, char type);//0²åÈë£¬·Ç0³ö´í

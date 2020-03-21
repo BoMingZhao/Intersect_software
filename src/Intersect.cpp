@@ -115,12 +115,15 @@ bool Intersect::checkLine(Line l) {
     for (it = lineset.begin(); it != lineset.end(); it++) {
         Line l2 = *it;
         if (l.type == 0) {
-            if ((l2.A * l.B == l2.B * l.A) && (l2.A * l.C == l.A * l2.C)) {
+            if ((l2.A * l.B == l2.B * l.A) && (l2.A * l.C == l.A * l2.C) && l2.A != 0 && l.A != 0) {
+                return false;
+            }
+            else if ((l2.A * l.B == l2.B * l.A) && (l2.B * l.C == l.B * l2.C) && l2.B != 0 && l.B != 0) {
                 return false;
             }
         }
         else if (l.type == 1) {//l是射线
-            if ((l2.A * l.B == l2.B * l.A) && (l2.A * l.C == l.A * l2.C)) {//重合
+            if ((l2.A * l.B == l2.B * l.A) && (l2.A * l.C == l.A * l2.C) && l2.A != 0 && l.A != 0) {//重合
                 if (l2.type == 0) {//l2是直线
                     return false;
                 }
@@ -172,9 +175,106 @@ bool Intersect::checkLine(Line l) {
                     }
                 }
             }
+            else if ((l2.A * l.B == l2.B * l.A) && (l2.B * l.C == l.B * l2.C) && l2.B != 0 && l.B != 0) {
+                if (l2.type == 0) {//l2是直线
+                    return false;
+                }
+                else if (l2.type == 1) {//l2是射线
+                    if (l2.dirct == l.dirct) {
+                        return false;
+                    }
+                    else if (l2.dirct == 0) {
+                        if (l2.x1 < l.x1) {
+                            return false;
+                        }
+                    }
+                    else if (l2.dirct == 1) {
+                        if (l2.x1 > l.x1) {
+                            return false;
+                        }
+                    }
+                    else if (l2.dirct == 2) {
+                        if (l2.y1 < l.y1) {
+                            return false;
+                        }
+                    }
+                    else if (l2.dirct == 3) {
+                        if (l2.y1 > l.y1) {
+                            return false;
+                        }
+                    }
+                }
+                else {
+                    if (l.dirct == 0) {
+                        if (l2.x2 > l.x1) {
+                            return false;
+                        }
+                    }
+                    else if (l.dirct == 1) {
+                        if (l2.x1 < l.x1) {
+                            return false;
+                        }
+                    }
+                    else if (l.dirct == 2) {
+                        if (l2.y2 > l.y1) {
+                            return false;
+                        }
+                    }
+                    else {
+                        if (l2.y1 < l.y1) {
+                            return false;
+                        }
+                    }
+                }
+            }
         }
         else {
-            if ((l2.A * l.B == l2.B * l.A) && (l2.A * l.C == l.A * l2.C)) {
+            if ((l2.A * l.B == l2.B * l.A) && (l2.A * l.C == l.A * l2.C) && l2.A != 0 && l.A != 0) {
+                if (l2.type == 0) {//l2是直线
+                    return false;
+                }
+                else if (l2.type == 1) {
+                    if (l2.dirct == 0) {
+                        if (l.x2 > l2.x1) {
+                            return false;
+                        }
+                    }
+                    else if (l2.dirct == 1) {
+                        if (l.x1 < l2.x1) {
+                            return false;
+                        }
+                    }
+                    else if (l2.dirct == 2) {
+                        if (l.y2 > l2.y1) {
+                            return false;
+                        }
+                    }
+                    else {
+                        if (l.y1 < l2.y1) {
+                            return false;
+                        }
+                    }
+                }
+                else {
+                    if (l.x1 != l.x2) {
+                        if (l.x1 >= l2.x2 || l.x2 <= l2.x1) {
+                            continue;
+                        }
+                        else {
+                            return false;
+                        }
+                    }
+                    else {
+                        if (l.y1 >= l2.y2 || l.y2 <= l2.y1) {
+                            continue;
+                        }
+                        else {
+                            return false;
+                        }
+                    }
+                }
+            }
+            else if ((l2.A * l.B == l2.B * l.A) && (l2.B * l.C == l.B * l2.C) && l2.B != 0 && l.B != 0) {
                 if (l2.type == 0) {//l2是直线
                     return false;
                 }
@@ -741,6 +841,17 @@ int Intersect::result()
 }
 
 int Intersect::insertLine(int x1, int y1, int x2, int y2, char type) {
+    try {
+        if (type != 'R' && type != 'L' && type != 'S') {
+            throw Exception_WF();
+        }
+    }
+    catch (Exception_WF & me)
+    {
+        me.what(1,2);
+        cout << "Wrong Format!Type must be 'S','R','L'\n";
+        return 5;
+    }
     try {
         if (x1 == x2 && y1 == y2) {
             throw Exception_MD();

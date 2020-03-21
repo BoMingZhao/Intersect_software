@@ -21,6 +21,8 @@ namespace IntersectTest
 			p.insertLine(0, 0, 1, 2, 'L');
 			ret = p.insertLine(0, 0, -1, -2, 'R');
 			Assert::AreEqual(ret, (int)4);
+			ret = p.insertLine(0, 0, 1, 5, 'C');
+			Assert::AreEqual(ret, (int)5);
 			ret = p.insertLine(0, 0, 1, 1, 'L');
 			Assert::AreEqual(ret, (int)0);
 		}

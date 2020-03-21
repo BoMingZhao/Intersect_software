@@ -116,12 +116,67 @@ bool Intersect::checkLine(Line l) {
     for (it = lineset.begin(); it != lineset.end(); it++) {
         Line l2 = *it;
         if (l.type == 0) {
-            if ((l2.A * l.B == l2.B * l.A) && (l2.A * l.C == l.A * l2.C)) {
+            if ((l2.A * l.B == l2.B * l.A) && (l2.A * l.C == l.A * l2.C) && l2.A != 0 && l.A != 0) {
+                return false;
+            }
+            else if ((l2.A * l.B == l2.B * l.A) && (l2.B * l.C == l.B * l2.C) && l2.B != 0 && l.B != 0) {
                 return false;
             }
         }
         else if (l.type == 1) {//l是射线
-            if ((l2.A * l.B == l2.B * l.A) && (l2.A * l.C == l.A * l2.C)) {//重合
+            if ((l2.A * l.B == l2.B * l.A) && (l2.A * l.C == l.A * l2.C) && l2.A != 0 && l.A != 0) {//重合
+                if (l2.type == 0) {//l2是直线
+                    return false;
+                }
+                else if (l2.type == 1) {//l2是射线
+                    if (l2.dirct == l.dirct) {
+                        return false;
+                    }
+                    else if (l2.dirct == 0) {
+                        if (l2.x1 < l.x1) {
+                            return false;
+                        }
+                    }
+                    else if (l2.dirct == 1) {
+                        if (l2.x1 > l.x1) {
+                            return false;
+                        }
+                    }
+                    else if (l2.dirct == 2) {
+                        if (l2.y1 < l.y1) {
+                            return false;
+                        }
+                    }
+                    else if (l2.dirct == 3) {
+                        if (l2.y1 > l.y1) {
+                            return false;
+                        }
+                    }
+                }
+                else {
+                    if (l.dirct == 0) {
+                        if (l2.x2 > l.x1) {
+                            return false;
+                        }
+                    }
+                    else if (l.dirct == 1) {
+                        if (l2.x1 < l.x1) {
+                            return false;
+                        }
+                    }
+                    else if (l.dirct == 2) {
+                        if (l2.y2 > l.y1) {
+                            return false;
+                        }
+                    }
+                    else {
+                        if (l2.y1 < l.y1) {
+                            return false;
+                        }
+                    }
+                }
+            }
+            else if ((l2.A * l.B == l2.B * l.A) && (l2.B * l.C == l.B * l2.C) && l2.B != 0 && l.B != 0) {
                 if (l2.type == 0) {//l2是直线
                     return false;
                 }
@@ -175,7 +230,52 @@ bool Intersect::checkLine(Line l) {
             }
         }
         else {
-            if ((l2.A * l.B == l2.B * l.A) && (l2.A * l.C == l.A * l2.C)) {
+            if ((l2.A * l.B == l2.B * l.A) && (l2.A * l.C == l.A * l2.C) && l2.A != 0 && l.A != 0) {
+                if (l2.type == 0) {//l2是直线
+                    return false;
+                }
+                else if (l2.type == 1) {
+                    if (l2.dirct == 0) {
+                        if (l.x2 > l2.x1) {
+                            return false;
+                        }
+                    }
+                    else if (l2.dirct == 1) {
+                        if (l.x1 < l2.x1) {
+                            return false;
+                        }
+                    }
+                    else if (l2.dirct == 2) {
+                        if (l.y2 > l2.y1) {
+                            return false;
+                        }
+                    }
+                    else {
+                        if (l.y1 < l2.y1) {
+                            return false;
+                        }
+                    }
+                }
+                else {
+                    if (l.x1 != l.x2) {
+                        if (l.x1 >= l2.x2 || l.x2 <= l2.x1) {
+                            continue;
+                        }
+                        else {
+                            return false;
+                        }
+                    }
+                    else {
+                        if (l.y1 >= l2.y2 || l.y2 <= l2.y1) {
+                            continue;
+                        }
+                        else {
+                            return false;
+                        }
+                    }
+                }
+            }
+            else if ((l2.A * l.B == l2.B * l.A) && (l2.B * l.C == l.B * l2.C) && l2.B != 0 && l.B != 0) {
                 if (l2.type == 0) {//l2是直线
                     return false;
                 }
@@ -738,10 +838,21 @@ void Intersect::calculate()
 
 int Intersect::result()
 {
-    return Setpoint.size();
+    return (int)Setpoint.size();
 }
 
 int Intersect::insertLine(int x1, int y1, int x2, int y2, char type) {
+    try {
+        if (type != 'R' && type != 'L' && type != 'S') {
+            throw Exception_WF();
+        }
+    }
+    catch (Exception_WF& me)
+    {
+        me.what(1, 2);
+        cout << "Wrong Format!Type must be 'S','R','L'\n";
+        return 5;
+    }
     try {
         if (x1 == x2 && y1 == y2) {
             throw Exception_MD();
@@ -895,4 +1006,194 @@ vector<vector<int>> Intersect::pullgraph() {
         graph.push_back(t);
     }
     return graph;
+}
+
+void Intersect::readdata_File(const char* name)
+{
+    FILE* stream;
+    freopen_s(&stream, name, "r", stdin);
+    int n;
+    char type;
+    int x1, x2, y1, y2;
+    int x, y, r;
+    try {
+        if (scanf_s("%d", &n) != 1) {
+            throw Exception_WF();
+        }
+    }
+    catch (Exception_WF& me)
+    {
+        cout << me.what(0, 1);
+        cout << "请检查文件格式后重试" << endl;
+        lineset.clear();
+        circleset.clear();
+        fclose(stdin);
+        return;
+    }
+    for (int i = 1; i <= n; i++) {
+        cin >> type;
+        if (type == 'L' || type == 'R' || type == 'S') {
+            try {
+                if (scanf_s("%d%d%d%d", &x1, &y1, &x2, &y2) != 4) {
+                    throw Exception_WF();
+                }
+            }
+            catch (Exception_WF& me)
+            {
+                cout << me.what(0, 4);
+                cout << "请检查文件格式后重试" << endl;
+                lineset.clear();
+                circleset.clear();
+                fclose(stdin);
+                return;
+            }
+            try {
+                if (x1 == x2 && y1 == y2) {
+                    throw Exception_MD();
+                }
+            }
+            catch (Exception_MD& me)
+            {
+                cout << me.what();
+                cout << "请检查文件格式后重试" << endl;
+                lineset.clear();
+                circleset.clear();
+                fclose(stdin);
+                return;
+            }
+            try {
+                if (x1 >= MAX_XY || x2 >= MAX_XY || y1 >= MAX_XY || y2 >= MAX_XY) {
+                    throw Exception_OFB();
+                }
+            }
+            catch (Exception_OFB& me)
+            {
+                cout << me.what(0);
+                cout << "请检查文件格式后重试" << endl;
+                lineset.clear();
+                circleset.clear();
+                fclose(stdin);
+                return;
+            }
+            try {
+                if (x1 <= MIN_XY || x2 <= MIN_XY || y1 <= MIN_XY || y2 <= MIN_XY) {
+                    throw Exception_OFB();
+                }
+            }
+            catch (Exception_OFB& me)
+            {
+                cout << me.what(1);
+                cout << "请检查文件格式后重试" << endl;
+                lineset.clear();
+                circleset.clear();
+                fclose(stdin);
+                return;
+            }
+            Line l(x1, y1, x2, y2, type);
+            try {
+                if (checkLine(l) == false) {
+                    throw Exception_IP();
+                }
+            }
+            catch (Exception_IP& me)
+            {
+                cout << me.what(0);
+                cout << "请检查文件格式后重试" << endl;
+                lineset.clear();
+                circleset.clear();
+                fclose(stdin);
+                return;
+            }
+            lineset.push_back(l);
+        }
+        else if (type == 'C') {
+            try {
+                if (scanf_s("%d%d%d", &x, &y, &r) != 3) {
+                    throw Exception_WF();
+                }
+            }
+            catch (Exception_WF& me)
+            {
+                cout << me.what(0, 3);
+                cout << "请检查文件格式后重试" << endl;
+                lineset.clear();
+                circleset.clear();
+                fclose(stdin);
+                return;
+            }
+            try {
+                if (x >= MAX_XY || y >= MAX_XY || r >= MAX_XY) {
+                    throw Exception_OFB();
+                }
+            }
+            catch (Exception_OFB& me)
+            {
+                cout << me.what(2);
+                cout << "请检查文件格式后重试" << endl;
+                lineset.clear();
+                circleset.clear();
+                fclose(stdin);
+                return;
+            }
+            try {
+                if (x <= MIN_XY || y <= MIN_XY) {
+                    throw Exception_OFB();
+                }
+            }
+            catch (Exception_OFB& me)
+            {
+                cout << me.what(3);
+                cout << "请检查文件格式后重试" << endl;
+                lineset.clear();
+                circleset.clear();
+                fclose(stdin);
+                return;
+            }
+            try {
+                if (r <= 0) {
+                    throw Exception_OFB();
+                }
+            }
+            catch (Exception_OFB& me)
+            {
+                cout << me.what(4);
+                cout << "请检查文件格式后重试" << endl;
+                lineset.clear();
+                circleset.clear();
+                fclose(stdin);
+                return;
+            }
+            Circle c(x, y, r);
+            try {
+                if (checkCircle(c) == false) {
+                    throw Exception_IP();
+                }
+            }
+            catch (Exception_IP& me)
+            {
+                cout << me.what(1);
+                cout << "请检查文件格式后重试" << endl;
+                lineset.clear();
+                circleset.clear();
+                fclose(stdin);
+                return;
+            }
+            circleset.push_back(c);
+        }
+        else {
+            try {
+                throw Exception_WF();
+            }
+            catch (Exception_WF& me)
+            {
+                cout << me.what(2, 0);
+                cout << "请检查文件格式后重试" << endl;
+                lineset.clear();
+                circleset.clear();
+                fclose(stdin);
+                return;
+            }
+        }
+    }
+    fclose(stdin);
 }
