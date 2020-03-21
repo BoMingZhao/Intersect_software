@@ -73,7 +73,10 @@ bool Line::equal(Line l) {
 		return false;
 	}
 	else if (l.type == 0) {
-		if ((this->A * l.B == this->B * l.A) && (this->A * l.C == l.A * this->C)) {
+		if ((this->A * l.B == this->B * l.A) && (this->A * l.C == l.A * this->C) && this->A != 0 && l.A != 0) {
+			return true;
+		}
+		else if ((this->A * l.B == this->B * l.A) && (this->B * l.C == l.B * this->C) && this->B != 0 && l.B != 0) {
 			return true;
 		}
 		else {
