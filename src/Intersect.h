@@ -16,8 +16,11 @@ class Intersect
 public:
 	void clear();
 	void readdata();
+	void readdata_File(const char* name);
 	int result();
 	void calculate();
+	int insertgraph(string s);
+	int deletegraph(string s);
 	int insertLine(int x1, int y1, int x2, int y2, char type);//0插入，非0出错
 	int deleteLine(int x1, int y1, int x2, int y2, char type);//0删除 1出错
 	int insertCircle(int x, int y, int r);

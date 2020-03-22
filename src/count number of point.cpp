@@ -10,20 +10,28 @@ using namespace std;
 
 int main(int argc, char* argv[])
 {
-    FILE* stream;
+    FILE* fp;
+    int file = 0;
+    char shit = '\0';
+    char* NAME = &shit;
     for (int i = 0; i < argc; i++) {
         if (argv[i][0] == '-' && argv[i][1] == 'o') {
-            freopen_s(&stream, argv[i + 1], "w", stdout);
+            freopen_s(&fp, argv[i + 1], "w", stdout);
         }
         if (argv[i][0] == '-' && argv[i][1] == 'i') {
-            freopen_s(&stream, argv[i + 1], "r", stdin);
+            file = 1;
+            NAME = argv[i + 1];
         }
     }
     Intersect s;
-    s.readdata();
+    if (file == 0) {
+        s.readdata();
+    }
+    else {
+        s.readdata_File(NAME);
+    }
     s.calculate();
     cout << s.result() << endl;
-    fclose(stdin);
     fclose(stdout);
 }
 

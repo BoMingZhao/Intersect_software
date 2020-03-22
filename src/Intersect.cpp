@@ -339,10 +339,81 @@ int Intersect::calculate_line_line(Line l1, Line l2)
 {//caculate the crosspoint of the two lines 
     //int is eazy to test
     crosspoint point;
-    if ((l1.A * l2.B == l1.B * l2.A) && (l1.A * l2.C != l2.A * l1.C)) {//平行但不重合
+    if ((l1.A * l2.B == l1.B * l2.A) && (l1.A * l2.C != l2.A * l1.C) && l1.A != 0 && l2.A != 0) {//平行但不重合
         return 0;
     }
-    else if ((l1.A * l2.B == l1.B * l2.A) && (l1.A * l2.C == l2.A * l1.C)) {
+    else if ((l1.A * l2.B == l1.B * l2.A) && (l1.B * l2.C != l2.B * l1.C) && l1.B != 0 && l2.B != 0) {
+        return 0;
+    }
+    else if ((l1.A * l2.B == l1.B * l2.A) && (l1.A * l2.C == l2.A * l1.C) && l1.A != 0 && l2.A != 0) {
+        if (l1.type == 1) {
+            if (l2.type == 1) {
+                if (l1.x1 == l2.x1 && l1.y1 == l2.y1) {
+                    point.x = l1.x1;
+                    point.y = l1.y1;
+                    Setpoint.insert(point);
+                    return 1;
+                }
+                else {
+                    return 0;
+                }
+            }
+            else {
+                if (l1.x1 == l2.x1 && l1.y1 == l2.y1) {
+                    point.x = l1.x1;
+                    point.y = l1.y1;
+                    Setpoint.insert(point);
+                    return 1;
+                }
+                else if (l1.x1 == l2.x2 && l1.y1 == l2.y2) {
+                    point.x = l1.x1;
+                    point.y = l1.y1;
+                    Setpoint.insert(point);
+                    return 1;
+                }
+                else {
+                    return 0;
+                }
+            }
+        }
+        else {
+            if (l2.type == 1) {
+                if (l1.x1 == l2.x1 && l1.y1 == l2.y1) {
+                    point.x = l1.x1;
+                    point.y = l1.y1;
+                    Setpoint.insert(point);
+                    return 1;
+                }
+                else if (l1.x2 == l2.x1 && l1.y2 == l2.y1) {
+                    point.x = l1.x2;
+                    point.y = l1.y2;
+                    Setpoint.insert(point);
+                    return 1;
+                }
+                else {
+                    return 0;
+                }
+            }
+            else {
+                if (l1.x1 == l2.x2 && l1.y1 == l2.y2) {
+                    point.x = l1.x1;
+                    point.y = l1.y1;
+                    Setpoint.insert(point);
+                    return 1;
+                }
+                else if (l1.x2 == l2.x1 && l1.y2 == l2.y1) {
+                    point.x = l1.x2;
+                    point.y = l1.y2;
+                    Setpoint.insert(point);
+                    return 1;
+                }
+                else {
+                    return 0;
+                }
+            }
+        }
+    }
+    else if ((l1.A * l2.B == l1.B * l2.A) && (l1.B * l2.C != l2.B * l1.C) && l1.B != 0 && l2.B != 0) {
         if (l1.type == 1) {
             if (l2.type == 1) {
                 if (l1.x1 == l2.x1 && l1.y1 == l2.y1) {
@@ -840,6 +911,271 @@ int Intersect::result()
     return Setpoint.size();
 }
 
+int Intersect::insertgraph(string s)
+{
+    char type = 'a';
+    unsigned int i = 0;
+    int x1, y1, x2, y2, r;
+    bool flag = false;
+    for (i = 0; i < s.size(); i++) {
+        if (s[i] == ' ' || s[i] == '\n') {
+            continue;
+        }
+        else if (s[i] == 'L' || s[i] == 'S' || s[i] == 'R' || s[i] == 'C') {
+            type = s[i];
+            break;
+        }
+        else {
+            cout << "Wrong Format!Type must be 'S','R','L','C'" << endl;
+            return 1;
+        }
+    }
+    if (type == 'C') {
+        int which = 1;
+        int num = 0;
+        int sub = 0;
+        int error = 0;
+        for (i = i + 1; i < s.size(); i++) {//第一个参数
+            if (s[i] == ' ' || s[i] == '\n') {
+                continue;
+            }
+            else if (s[i] == '-' && error == 0) {
+                sub = 1;
+                error = 1;
+            }
+            else if (s[i] >= '0' && s[i] <= '9') {
+                error = 1;
+                int p = s[i] - '0';
+                num += p;
+                if (num >= MAX_XY) {//越界
+                    cout << "Out Of Bounds!The maximum and minimum value of the coordinates is 100000 and -100000 and the radius must more than 0" << endl;
+                    return 2;
+                }
+                if (s[i + 1] >= '0' && s[i + 1] <= '9') {
+                    num *= 10;
+                }
+                else {
+                    if (sub == 1) {
+                        num = (num == 0) ? 0 : -1 * num;
+                    }
+                    if (which == 1) {
+                        x1 = num;
+                        which++;
+                    }
+                    else if (which == 2) {
+                        y1 = num;
+                        which++;
+                    }
+                    else if (which == 3) {
+                        r = num;
+                        return insertCircle(x1, y1, r);
+                    }
+                    error = 0;
+                    sub = 0;
+                    num = 0;
+                }
+            }
+            else {
+                cout << "Wrong Format!This possition need three INT type" << endl;
+                return 3;
+            }
+        }
+    }
+    else if (type == 'R' || type == 'L' || type == 'S') {
+        int which = 1;
+        int num = 0;
+        int sub = 0;
+        int error = 0;
+        for (i = i + 1; i < s.size(); i++) {//第一个参数
+            if (s[i] == ' ' || s[i] == '\n') {
+                continue;
+            }
+            else if (s[i] == '-' && error == 0) {
+                sub = 1;
+                error = 1;
+            }
+            else if (s[i] >= '0' && s[i] <= '9') {
+                error = 1;
+                int p = s[i] - '0';
+                num += p;
+                if (num >= MAX_XY) {//越界
+                    cout << "Out Of Bounds!The maximum value of the coordinates is 100000 and The minimum value of the coordinates is -100000" << endl;
+                    return 2;
+                }
+                if (s[i + 1] >= '0' && s[i + 1] <= '9') {
+                    num *= 10;
+                }
+                else {
+                    if (sub == 1) {
+                        num = (num == 0) ? 0 : -1 * num;
+                    }
+                    if (which == 1) {
+                        x1 = num;
+                        which++;
+                    }
+                    else if (which == 2) {
+                        y1 = num;
+                        which++;
+                    }
+                    else if (which == 3) {
+                        x2 = num;
+                        which++;
+                    }
+                    else if (which == 4) {
+                        y2 = num;
+                        return insertLine(x1, y1, x2, y2, type);
+                    }
+                    error = 0;
+                    sub = 0;
+                    num = 0;
+                }
+            }
+            else {
+                cout << "Wrong Format!This possition need four INT type" << endl;
+                return 3;
+            }
+        }
+    }
+    else {
+        cout << "Wrong Format!Type must be 'S','R','L','C'" << endl;
+        return 1;
+    }
+    cout << "Wrong Format!Can't find enough parameter " << endl;
+    return 5;
+}
+
+int Intersect::deletegraph(string s) {
+    char type = 'a';
+    unsigned int i = 0;
+    int x1, y1, x2, y2, r;
+    bool flag = false;
+    for (i = 0; i < s.size(); i++) {
+        if (s[i] == ' ' || s[i] == '\n') {
+            continue;
+        }
+        else if (s[i] == 'L' || s[i] == 'S' || s[i] == 'R' || s[i] == 'C') {
+            type = s[i];
+            break;
+        }
+        else {
+            cout << "Wrong Format!Type must be 'S','R','L','C'" << endl;
+            return 1;
+        }
+    }
+    if (type == 'C') {
+        int which = 1;
+        int num = 0;
+        int sub = 0;
+        int error = 0;
+        for (i = i + 1; i < s.size(); i++) {//第一个参数
+            if (s[i] == ' ' || s[i] == '\n') {
+                continue;
+            }
+            else if (s[i] == '-' && error == 0) {
+                sub = 1;
+                error = 1;
+            }
+            else if (s[i] >= '0' && s[i] <= '9') {
+                error = 1;
+                int p = s[i] - '0';
+                num += p;
+                if (num >= MAX_XY) {//越界
+                    cout << "Out Of Bounds!The maximum and minimum value of the coordinates is 100000 and -100000 and the radius must more than 0" << endl;
+                    return 2;
+                }
+                if (s[i + 1] >= '0' && s[i + 1] <= '9') {
+                    num *= 10;
+                }
+                else {
+                    if (sub == 1) {
+                        num = (num == 0) ? 0 : -1 * num;
+                    }
+                    if (which == 1) {
+                        x1 = num;
+                        which++;
+                    }
+                    else if (which == 2) {
+                        y1 = num;
+                        which++;
+                    }
+                    else if (which == 3) {
+                        r = num;
+                        return deleteCircle(x1, y1, r);
+                    }
+                    error = 0;
+                    sub = 0;
+                    num = 0;
+                }
+            }
+            else {
+                cout << "Wrong Format!This possition need three INT type" << endl;
+                return 3;
+            }
+        }
+    }
+    else if (type == 'R' || type == 'L' || type == 'S') {
+        int which = 1;
+        int num = 0;
+        int sub = 0;
+        int error = 0;
+        for (i = i + 1; i < s.size(); i++) {//第一个参数
+            if (s[i] == ' ' || s[i] == '\n') {
+                continue;
+            }
+            else if (s[i] == '-' && error == 0) {
+                sub = 1;
+                error = 1;
+            }
+            else if (s[i] >= '0' && s[i] <= '9') {
+                error = 1;
+                int p = s[i] - '0';
+                num += p;
+                if (num >= MAX_XY) {//越界
+                    cout << "Out Of Bounds!The maximum value of the coordinates is 100000 and The minimum value of the coordinates is -100000" << endl;
+                    return 2;
+                }
+                if (s[i + 1] >= '0' && s[i + 1] <= '9') {
+                    num *= 10;
+                }
+                else {
+                    if (sub == 1) {
+                        num = (num == 0) ? 0 : -1 * num;
+                    }
+                    if (which == 1) {
+                        x1 = num;
+                        which++;
+                    }
+                    else if (which == 2) {
+                        y1 = num;
+                        which++;
+                    }
+                    else if (which == 3) {
+                        x2 = num;
+                        which++;
+                    }
+                    else if (which == 4) {
+                        y2 = num;
+                        return deleteLine(x1, y1, x2, y2, type);
+                    }
+                    error = 0;
+                    sub = 0;
+                    num = 0;
+                }
+            }
+            else {
+                cout << "Wrong Format!This possition need four INT type" << endl;
+                return 3;
+            }
+        }
+    }
+    else {
+        cout << "Wrong Format!Type must be 'S','R','L','C'" << endl;
+        return 1;
+    }
+    cout << "Wrong Format!Can't find enough parameter " << endl;
+    return 5;
+}
+
 int Intersect::insertLine(int x1, int y1, int x2, int y2, char type) {
     try {
         if (type != 'R' && type != 'L' && type != 'S') {
@@ -907,7 +1243,8 @@ int Intersect::deleteLine(int x1, int y1, int x2, int y2, char type) {
             return 0;
         }
     }
-    return 1;
+    cout << "Can't find this graph!" << endl;
+    return 6;
 }
 
 int Intersect::insertCircle(int x, int y, int r) {
@@ -965,7 +1302,8 @@ int Intersect::deleteCircle(int x, int y, int r) {
             return 0;
         }
     }
-    return 1;
+    cout << "Can't find this graph!" << endl;
+    return 6;
 }
 
 vector<pair<double, double>> Intersect::pullIntersect() {
@@ -1005,4 +1343,194 @@ vector<vector<int>> Intersect::pullgraph() {
         graph.push_back(t);
     }
     return graph;
+}
+
+void Intersect::readdata_File(const char* name)
+{
+    FILE* stream;
+    freopen_s(&stream, name, "r", stdin);
+    int n;
+    char type;
+    int x1, x2, y1, y2;
+    int x, y, r;
+    try {
+        if (fscanf_s(stdin, "%d", &n) != 1) {
+            throw Exception_WF();
+        }
+    }
+    catch (Exception_WF& me)
+    {
+        cout << me.what(0, 1);
+        cout << "请检查文件格式后重试" << endl;
+        lineset.clear();
+        circleset.clear();
+        fclose(stdin);
+        return;
+    }
+    for (int i = 1; i <= n; i++) {
+        cin >> type;
+        if (type == 'L' || type == 'R' || type == 'S') {
+            try {
+                if (fscanf_s(stdin, "%d%d%d%d", &x1, &y1, &x2, &y2) != 4) {
+                    throw Exception_WF();
+                }
+            }
+            catch (Exception_WF& me)
+            {
+                cout << me.what(0, 4);
+                cout << "请检查文件格式后重试" << endl;
+                lineset.clear();
+                circleset.clear();
+                fclose(stdin);
+                return;
+            }
+            try {
+                if (x1 == x2 && y1 == y2) {
+                    throw Exception_MD();
+                }
+            }
+            catch (Exception_MD& me)
+            {
+                cout << me.what();
+                cout << "请检查文件格式后重试" << endl;
+                lineset.clear();
+                circleset.clear();
+                fclose(stdin);
+                return;
+            }
+            try {
+                if (x1 >= MAX_XY || x2 >= MAX_XY || y1 >= MAX_XY || y2 >= MAX_XY) {
+                    throw Exception_OFB();
+                }
+            }
+            catch (Exception_OFB& me)
+            {
+                cout << me.what(0);
+                cout << "请检查文件格式后重试" << endl;
+                lineset.clear();
+                circleset.clear();
+                fclose(stdin);
+                return;
+            }
+            try {
+                if (x1 <= MIN_XY || x2 <= MIN_XY || y1 <= MIN_XY || y2 <= MIN_XY) {
+                    throw Exception_OFB();
+                }
+            }
+            catch (Exception_OFB& me)
+            {
+                cout << me.what(1);
+                cout << "请检查文件格式后重试" << endl;
+                lineset.clear();
+                circleset.clear();
+                fclose(stdin);
+                return;
+            }
+            Line l(x1, y1, x2, y2, type);
+            try {
+                if (checkLine(l) == false) {
+                    throw Exception_IP();
+                }
+            }
+            catch (Exception_IP& me)
+            {
+                cout << me.what(0);
+                cout << "请检查文件格式后重试" << endl;
+                lineset.clear();
+                circleset.clear();
+                fclose(stdin);
+                return;
+            }
+            lineset.push_back(l);
+        }
+        else if (type == 'C') {
+            try {
+                if (fscanf_s(stdin, "%d%d%d", &x, &y, &r) != 3) {
+                    throw Exception_WF();
+                }
+            }
+            catch (Exception_WF& me)
+            {
+                cout << me.what(0, 3);
+                cout << "请检查文件格式后重试" << endl;
+                lineset.clear();
+                circleset.clear();
+                fclose(stdin);
+                return;
+            }
+            try {
+                if (x >= MAX_XY || y >= MAX_XY || r >= MAX_XY) {
+                    throw Exception_OFB();
+                }
+            }
+            catch (Exception_OFB& me)
+            {
+                cout << me.what(2);
+                cout << "请检查文件格式后重试" << endl;
+                lineset.clear();
+                circleset.clear();
+                fclose(stdin);
+                return;
+            }
+            try {
+                if (x <= MIN_XY || y <= MIN_XY) {
+                    throw Exception_OFB();
+                }
+            }
+            catch (Exception_OFB& me)
+            {
+                cout << me.what(3);
+                cout << "请检查文件格式后重试" << endl;
+                lineset.clear();
+                circleset.clear();
+                fclose(stdin);
+                return;
+            }
+            try {
+                if (r <= 0) {
+                    throw Exception_OFB();
+                }
+            }
+            catch (Exception_OFB& me)
+            {
+                cout << me.what(4);
+                cout << "请检查文件格式后重试" << endl;
+                lineset.clear();
+                circleset.clear();
+                fclose(stdin);
+                return;
+            }
+            Circle c(x, y, r);
+            try {
+                if (checkCircle(c) == false) {
+                    throw Exception_IP();
+                }
+            }
+            catch (Exception_IP& me)
+            {
+                cout << me.what(1);
+                cout << "请检查文件格式后重试" << endl;
+                lineset.clear();
+                circleset.clear();
+                fclose(stdin);
+                return;
+            }
+            circleset.push_back(c);
+        }
+        else {
+            try {
+                throw Exception_WF();
+            }
+            catch (Exception_WF& me)
+            {
+                cout << me.what(2, 0);
+                cout << "请检查文件格式后重试" << endl;
+                lineset.clear();
+                circleset.clear();
+                fclose(stdin);
+                return;
+            }
+        }
+    }
+    fclose(stdin);
 }
