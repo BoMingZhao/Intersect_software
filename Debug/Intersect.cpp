@@ -1,5 +1,4 @@
 #include "Intersect.h"
-#include "pch.h"
 #include <iostream>
 using namespace std;
 #define ll long long
@@ -908,7 +907,8 @@ int Intersect::deleteLine(int x1, int y1, int x2, int y2, char type) {
             return 0;
         }
     }
-    return 1;
+    cout << "Can't find this graph!" << endl;
+    return 6;
 }
 
 int Intersect::insertCircle(int x, int y, int r) {
@@ -966,7 +966,8 @@ int Intersect::deleteCircle(int x, int y, int r) {
             return 0;
         }
     }
-    return 1;
+    cout << "Can't find this graph!" << endl;
+    return 6;
 }
 
 vector<pair<double, double>> Intersect::pullIntersect() {
@@ -1196,4 +1197,269 @@ void Intersect::readdata_File(const char* name)
         }
     }
     fclose(stdin);
+}
+
+int Intersect::insertgraph(string s)
+{
+    char type = 'a';
+    unsigned int i = 0;
+    int x1, y1, x2, y2, r;
+    bool flag = false;
+    for (i = 0; i < s.size(); i++) {
+        if (s[i] == ' ' || s[i] == '\n') {
+            continue;
+        }
+        else if (s[i] == 'L' || s[i] == 'S' || s[i] == 'R' || s[i] == 'C') {
+            type = s[i];
+            break;
+        }
+        else {
+            cout << "Wrong Format!Type must be 'S','R','L','C'" << endl;
+            return 1;
+        }
+    }
+    if (type == 'C') {
+        int which = 1;
+        int num = 0;
+        int sub = 0;
+        int error = 0;
+        for (i = i + 1; i < s.size(); i++) {//第一个参数
+            if (s[i] == ' ' || s[i] == '\n') {
+                continue;
+            }
+            else if (s[i] == '-' && error == 0) {
+                sub = 1;
+                error = 1;
+            }
+            else if (s[i] >= '0' && s[i] <= '9') {
+                error = 1;
+                int p = s[i] - '0';
+                num += p;
+                if (num >= MAX_XY) {//越界
+                    cout << "Out Of Bounds!The maximum and minimum value of the coordinates is 100000 and -100000 and the radius must more than 0" << endl;
+                    return 2;
+                }
+                if (s[i + 1] >= '0' && s[i + 1] <= '9') {
+                    num *= 10;
+                }
+                else {
+                    if (sub == 1) {
+                        num = (num == 0) ? 0 : -1 * num;
+                    }
+                    if (which == 1) {
+                        x1 = num;
+                        which++;
+                    }
+                    else if (which == 2) {
+                        y1 = num;
+                        which++;
+                    }
+                    else if (which == 3) {
+                        r = num;
+                        return insertCircle(x1, y1, r);
+                    }
+                    error = 0;
+                    sub = 0;
+                    num = 0;
+                }
+            }
+            else {
+                cout << "Wrong Format!This possition need three INT type" << endl;
+                return 3;
+            }
+        }
+    }
+    else if (type == 'R' || type == 'L' || type == 'S') {
+        int which = 1;
+        int num = 0;
+        int sub = 0;
+        int error = 0;
+        for (i = i + 1; i < s.size(); i++) {//第一个参数
+            if (s[i] == ' ' || s[i] == '\n') {
+                continue;
+            }
+            else if (s[i] == '-' && error == 0) {
+                sub = 1;
+                error = 1;
+            }
+            else if (s[i] >= '0' && s[i] <= '9') {
+                error = 1;
+                int p = s[i] - '0';
+                num += p;
+                if (num >= MAX_XY) {//越界
+                    cout << "Out Of Bounds!The maximum value of the coordinates is 100000 and The minimum value of the coordinates is -100000" << endl;
+                    return 2;
+                }
+                if (s[i + 1] >= '0' && s[i + 1] <= '9') {
+                    num *= 10;
+                }
+                else {
+                    if (sub == 1) {
+                        num = (num == 0) ? 0 : -1 * num;
+                    }
+                    if (which == 1) {
+                        x1 = num;
+                        which++;
+                    }
+                    else if (which == 2) {
+                        y1 = num;
+                        which++;
+                    }
+                    else if (which == 3) {
+                        x2 = num;
+                        which++;
+                    }
+                    else if (which == 4) {
+                        y2 = num;
+                        return insertLine(x1, y1, x2, y2, type);
+                    }
+                    error = 0;
+                    sub = 0;
+                    num = 0;
+                }
+            }
+            else {
+                cout << "Wrong Format!This possition need four INT type" << endl;
+                return 3;
+            }
+        }
+    }
+    else {
+        cout << "Wrong Format!Type must be 'S','R','L','C'" << endl;
+        return 1;
+    }
+    cout << "Wrong Format!Can't find enough parameter " << endl;
+    return 5;
+}
+
+int Intersect::deletegraph(string s) {
+    char type = 'a';
+    unsigned int i = 0;
+    int x1, y1, x2, y2, r;
+    bool flag = false;
+    for (i = 0; i < s.size(); i++) {
+        if (s[i] == ' ' || s[i] == '\n') {
+            continue;
+        }
+        else if (s[i] == 'L' || s[i] == 'S' || s[i] == 'R' || s[i] == 'C') {
+            type = s[i];
+            break;
+        }
+        else {
+            cout << "Wrong Format!Type must be 'S','R','L','C'" << endl;
+            return 1;
+        }
+    }
+    if (type == 'C') {
+        int which = 1;
+        int num = 0;
+        int sub = 0;
+        int error = 0;
+        for (i = i + 1; i < s.size(); i++) {//第一个参数
+            if (s[i] == ' ' || s[i] == '\n') {
+                continue;
+            }
+            else if (s[i] == '-' && error == 0) {
+                sub = 1;
+                error = 1;
+            }
+            else if (s[i] >= '0' && s[i] <= '9') {
+                error = 1;
+                int p = s[i] - '0';
+                num += p;
+                if (num >= MAX_XY) {//越界
+                    cout << "Out Of Bounds!The maximum and minimum value of the coordinates is 100000 and -100000 and the radius must more than 0" << endl;
+                    return 2;
+                }
+                if (s[i + 1] >= '0' && s[i + 1] <= '9') {
+                    num *= 10;
+                }
+                else {
+                    if (sub == 1) {
+                        num = (num == 0) ? 0 : -1 * num;
+                    }
+                    if (which == 1) {
+                        x1 = num;
+                        which++;
+                    }
+                    else if (which == 2) {
+                        y1 = num;
+                        which++;
+                    }
+                    else if (which == 3) {
+                        r = num;
+                        return deleteCircle(x1, y1, r);
+                    }
+                    error = 0;
+                    sub = 0;
+                    num = 0;
+                }
+            }
+            else {
+                cout << "Wrong Format!This possition need three INT type" << endl;
+                return 3;
+            }
+        }
+    }
+    else if (type == 'R' || type == 'L' || type == 'S') {
+        int which = 1;
+        int num = 0;
+        int sub = 0;
+        int error = 0;
+        for (i = i + 1; i < s.size(); i++) {//第一个参数
+            if (s[i] == ' ' || s[i] == '\n') {
+                continue;
+            }
+            else if (s[i] == '-' && error == 0) {
+                sub = 1;
+                error = 1;
+            }
+            else if (s[i] >= '0' && s[i] <= '9') {
+                error = 1;
+                int p = s[i] - '0';
+                num += p;
+                if (num >= MAX_XY) {//越界
+                    cout << "Out Of Bounds!The maximum value of the coordinates is 100000 and The minimum value of the coordinates is -100000" << endl;
+                    return 2;
+                }
+                if (s[i + 1] >= '0' && s[i + 1] <= '9') {
+                    num *= 10;
+                }
+                else {
+                    if (sub == 1) {
+                        num = (num == 0) ? 0 : -1 * num;
+                    }
+                    if (which == 1) {
+                        x1 = num;
+                        which++;
+                    }
+                    else if (which == 2) {
+                        y1 = num;
+                        which++;
+                    }
+                    else if (which == 3) {
+                        x2 = num;
+                        which++;
+                    }
+                    else if (which == 4) {
+                        y2 = num;
+                        return deleteLine(x1, y1, x2, y2, type);
+                    }
+                    error = 0;
+                    sub = 0;
+                    num = 0;
+                }
+            }
+            else {
+                cout << "Wrong Format!This possition need four INT type" << endl;
+                return 3;
+            }
+        }
+    }
+    else {
+        cout << "Wrong Format!Type must be 'S','R','L','C'" << endl;
+        return 1;
+    }
+    cout << "Wrong Format!Can't find enough parameter " << endl;
+    return 5;
 }
