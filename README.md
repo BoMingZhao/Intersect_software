@@ -13,3 +13,5 @@ debug下是封装好的动态库，使用时首先将所有头文件添加到您
 #include "Intersect.h"
 #pragma comment(lib,"Intersect.lib")//这里告诉编译器我们的函数从动态库中调取
 ```
+
+最后的UI界面在文件夹UI下。
